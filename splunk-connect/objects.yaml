@@ -1,0 +1,12 @@
+global:
+  splunk:
+    hec:
+      token: d8d17157-a4d3-4bb2-98cd-e636c5e88811
+      host: hec.bwlab.de
+      protocol: https
+      port: 443
+      indexName: kubernetes_objects
+
+serviceAccount:
+  create: true
+  name: splunk-logging

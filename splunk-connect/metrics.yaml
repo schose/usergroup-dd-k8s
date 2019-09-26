@@ -1,0 +1,15 @@
+global:
+  splunk:
+    hec:
+      token: d8d17157-a4d3-4bb2-98cd-e636c5e88899
+      host: hec.bwlab.de
+      protocol: https
+      port: 443
+      indexName: kubernetes_metrics
+  kubernetes:
+    clusterName: "bwlab_cluster"
+metricsInterval: 15s
+
+
+serviceAccount:
+  create: true

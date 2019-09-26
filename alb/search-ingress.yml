@@ -1,0 +1,24 @@
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  name: search-ingress
+  annotations:
+    kubernetes.io/ingress.class: alb
+    alb.ingress.kubernetes.io/scheme: internet-facing
+    alb.ingress.kubernetes.io/listen-ports: '[{"HTTP": 80}, {"HTTPS":443}]'
+    alb.ingress.kubernetes.io/certificate-arn: arn:aws:acm:eu-central-1:952133313117:certificate/4cf15da0-698b-43e8-ba3d-94d16fb66f99
+#    alb.ingress.kubernetes.io/subnets: subnet-076aae2b770bb7242,subnet-05b49682a50f8fb6e
+#    alb.ingress.kubernetes.io/tags: Environment=dev,Team=test
+    alb.ingress.kubernetes.io/actions.ssl-redirect: '{"Type": "redirect", "RedirectConfig": { "Protocol": "HTTPS", "Port": "443", "StatusCode": "HTTP_301"}}'
+#    service.beta.kubernetes.io/aws-load-balancer-ssl-ports: "https"
+
+
+spec:
+  rules:
+    - host: splunk.bwlab.de
+      http:
+        paths:
+          - path: /*
+            backend:
+              serviceName: search-np
+              servicePort: 80

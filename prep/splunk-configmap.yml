@@ -1,0 +1,19 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: splunk-config
+  namespace: default
+data:
+    SPLUNK_HOME: /opt/splunk
+    SPLUNK_START_ARGS: "--accept-license"
+    SPLUNK_PASSWORD: Password01
+    SPLUNK_ROLE: splunk_indexer
+    SPLUNK_CLUSTER_MASTER_URL: master
+    SPLUNK_INDEXER_URL: indexer-0,indexer-1,indexer-2
+    SPLUNK_SEARCH_HEAD_URL: search-0,search-1
+    SPLUNK_DEPLOYER_URL: deployer
+    SPLUNK_SEARCH_HEAD_CAPTAIN_URL: captain
+    SPLUNK_DEBUG: "true"
+    SPLUNK_IDXC_SECRET: mypass4splunk
+    SPLUNK_SHC_SECRET: shcpass4splunk
+    SPLUNK_LICENSE_MASTER_URL: license-master
