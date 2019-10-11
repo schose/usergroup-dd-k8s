@@ -69,7 +69,7 @@ oder
 
   
 
-``k apply -f pvc/*``
+``k apply -f pvc``
 
   
 
@@ -77,7 +77,7 @@ oder
 
   
 
-``k apply -f services/*``
+``k apply -f services``
 
   
 
@@ -85,7 +85,7 @@ oder
 
   
 
-``k apply -f deploy/*``
+``k apply -f deploy``
 
   
 
@@ -93,7 +93,7 @@ oder
 
   
 
-``k apply -f alb/*``
+``k apply -f alb``
 
   
   
@@ -104,11 +104,6 @@ oder
 
   
 
-workaround:
-
-- start container with
-
-`` command: ['sh', '-c', 'echo The app is running! && sleep 3600']``
 
   
 
@@ -158,6 +153,12 @@ https://github.com/splunk/splunk-ansible/blob/develop/docs/advanced/default.yml.
 
 - https://github.com/splunk/splunk-ansible/pull/211/commits
 - permission denied error when upgrading from 7.2.6
+workaround:
+
+- start container with
+
+`` command: ['sh', '-c', 'echo The app is running! && sleep 3600']``
+
 - should be fixed at 7.3.1
 
 - ansible ENV variables [https://splunk.github.io/splunk-ansible/ADVANCED.html#inventory-script](https://splunk.github.io/splunk-ansible/ADVANCED.html)
