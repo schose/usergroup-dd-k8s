@@ -1,0 +1,58 @@
+apiVersion: apps/v1beta1
+kind: StatefulSet
+metadata:
+  name: search
+spec:
+  replicas: 2 
+  serviceName: search
+  volumeClaimTemplates:
+  - metadata:
+      name: splunk-search-data
+    spec:
+      accessModes: [ "ReadWriteOnce" ]
+      resources:
+        requests:
+          storage: 10Gi
+  - metadata: 
+      name: splunk-search-config
+    spec:
+      accessModes: [ "ReadWriteOnce" ]
+      resources:
+        requests:
+          storage: 10Gi
+  template:
+    metadata:
+      labels:
+        app: splunk
+        role: splunk_search_head
+        tier: search 
+    spec:
+      dnsPolicy: ClusterFirst 
+      dnsConfig:
+        searches: 
+          - indexer.default.svc.cluster.local
+          - search.default.svc.cluster.local 
+      containers:
+        - name: search
+          image: splunk/splunk:7.2.7
+#          command: ['sh', '-c', 'echo The app is running! && sleep 3600']
+          envFrom: 
+            - configMapRef:
+                name: splunk-config
+          env:
+            - name: SPLUNK_ROLE
+              value: splunk_search_head
+          ports:
+            - containerPort: 8088
+            - containerPort: 8089
+            - containerPort: 8191 
+            - containerPort: 4001
+          volumeMounts:
+            - name: splunk-search-config
+              mountPath: /opt/splunk/etc
+            - name: splunk-search-data
+              mountPath: /opt/splunk/var
+      volumes:
+        - name: splunk-defaults-configmap
+          configMap:
+            name: splunk-defaults-configmap

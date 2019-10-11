@@ -1,0 +1,59 @@
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: heavyforwarder
+  labels:
+    app: splunk
+    role: splunk_heavy_forwarder
+    tier: management
+spec:
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: splunk
+        role: splunk_heavy_forwarder
+        tier: management
+    spec:
+      hostname: heavyforwarder
+      dnsPolicy: ClusterFirst
+      dnsConfig:
+        searches:
+          - indexer.default.svc.cluster.local
+          - search.default.svc.cluster.local
+      containers:
+        - name: heavyforwarder
+          image: splunk/splunk:7.2.7
+#          command: ['sh', '-c', 'echo The app is running! && sleep 3600']
+          envFrom: 
+            - configMapRef:
+                name: splunk-config
+          env:
+            - name: SPLUNK_ROLE
+              value: splunk_heavy_forwarder
+            - name: SPLUNK_DEPLOYMENT_SERVER
+              value: dpl
+          ports:
+            - name: web
+              containerPort: 8000
+            - name: mgmt
+              containerPort: 8089
+            - name: kv
+              containerPort: 8191
+          volumeMounts:
+            - name: splunk-heavyforwarder-data
+              mountPath: /opt/splunk/var
+            - name: splunk-heavyforwarder-config
+              mountPath: /opt/splunk/etc
+            - name: splunk-defaults-configmap
+              mountPath: /tmp/defaults
+      volumes:
+        - name: splunk-heavyforwarder-config
+          persistentVolumeClaim:
+            claimName: splunk-heavyforwarder-config
+        - name: splunk-heavyforwarder-data
+          persistentVolumeClaim:
+            claimName: splunk-heavyforwarder-data
+        - name: splunk-defaults-configmap
+          configMap:
+            name: splunk-defaults-configmap

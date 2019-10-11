@@ -1,0 +1,58 @@
+---
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: deployer
+  labels:
+    app: splunk
+    role: splunk_deployer
+    tier: management
+spec:
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: splunk
+        role: splunk_deployer
+        tier: management
+    spec:
+      hostname: deployer
+      dnsPolicy: ClusterFirst
+      dnsConfig:
+        searches:
+          - indexer.default.svc.cluster.local
+          - search.default.svc.cluster.local
+      containers:
+        - name: deployer
+          image: splunk/splunk:7.2.7
+#          command: ['sh', '-c', 'echo The app is running! && sleep 3600']
+          envFrom: 
+            - configMapRef:
+                name: splunk-config
+          env:
+            - name: SPLUNK_ROLE
+              value: splunk_deployer
+          ports:
+            - name: web
+              containerPort: 8000
+            - name: mgmt
+              containerPort: 8089
+            - name: kv
+              containerPort: 8191
+          volumeMounts:
+            - name: splunk-deployer-data
+              mountPath: /opt/splunk/var
+            - name: splunk-deployer-config
+              mountPath: /opt/splunk/etc
+            - name: splunk-defaults-configmap
+              mountPath: /tmp/defaults
+      volumes:
+        - name: splunk-deployer-config
+          persistentVolumeClaim:
+            claimName: splunk-deployer-config
+        - name: splunk-deployer-data
+          persistentVolumeClaim:
+            claimName: splunk-deployer-data
+        - name: splunk-defaults-configmap
+          configMap:
+            name: splunk-defaults-configmap

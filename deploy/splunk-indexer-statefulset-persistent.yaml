@@ -1,0 +1,79 @@
+apiVersion: apps/v1beta1
+kind: StatefulSet
+metadata:
+  name: indexer
+  labels:
+    app: splunk
+    role: splunk_indexer
+    tier: indexer
+spec:
+  replicas: 5
+  serviceName: indexer
+  volumeClaimTemplates:
+  - metadata:
+      name: splunk-idxcluster-data
+      labels:
+        app: splunk
+        role: splunk_indexer
+        tier: indexer
+    spec:
+      accessModes: [ "ReadWriteOnce" ]
+      resources:
+        requests:
+          storage: 20Gi
+  - metadata:
+      name: splunk-idxcluster-colddb
+      labels:
+        app: splunk
+        role: splunk_indexer
+        tier: indexer
+    spec:
+      accessModes: [ "ReadWriteOnce" ]
+      resources:
+        requests:
+          storage: 20Gi
+  - metadata: 
+      name: splunk-idxcluster-config
+      labels:
+        app: splunk
+        role: splunk_indexer
+        tier: indexer
+    spec:
+      accessModes: [ "ReadWriteOnce" ]
+      resources:
+        requests:
+          storage: 5Gi
+  template:
+    metadata:
+      labels:
+        app: splunk
+        role: splunk_indexer
+        tier: indexer 
+    spec:
+      dnsPolicy: ClusterFirst
+      dnsConfig:
+        searches:
+          - indexer.default.svc.cluster.local
+          - search.default.svc.cluster.local
+      containers:
+        - name: indexer
+          image: splunk/splunk:7.2.7
+          envFrom: 
+            - configMapRef:
+                name: splunk-config
+          env:
+            - name: SPLUNK_ROLE
+              value: splunk_indexer
+          ports:
+            - containerPort: 8000
+            - containerPort: 8088
+            - containerPort: 8089
+            - containerPort: 9997
+            - containerPort: 4001 
+          volumeMounts:
+            - name: splunk-idxcluster-config
+              mountPath: /opt/splunk/etc
+            - name: splunk-idxcluster-data
+              mountPath: /opt/splunk/var
+            - name: splunk-idxcluster-colddb
+              mountPath: /colddb

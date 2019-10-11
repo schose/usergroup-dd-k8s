@@ -1,0 +1,60 @@
+---
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: captain
+  labels:
+    app: splunk
+    role: splunk_search_head_captain
+    tier: search
+spec:
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: splunk
+        role: splunk_search_head_captain
+        tier: search
+    spec:
+      hostname: captain
+      dnsPolicy: ClusterFirst
+      dnsConfig:
+        searches:
+          - indexer.default.svc.cluster.local
+          - search.default.svc.cluster.local
+      containers:
+        - name: captain
+          image: splunk/splunk:7.2.7
+#          command: ['sh', '-c', 'echo The app is running! && sleep 3600']
+          envFrom: 
+            - configMapRef:
+                name: splunk-config
+          env:
+            - name: SPLUNK_ROLE
+              value: splunk_search_head_captain
+          ports:
+            - name: web
+              containerPort: 8000
+            - name: mgmt
+              containerPort: 8089
+            - name: shc
+              containerPort: 4001
+            - name: kv 
+              containerPort: 8191
+          volumeMounts:
+            - name: splunk-captain-data
+              mountPath: /opt/splunk/var
+            - name: splunk-captain-config
+              mountPath: /opt/splunk/etc
+            - name: splunk-defaults-configmap
+              mountPath: /tmp/defaults
+      volumes:
+        - name: splunk-captain-config
+          persistentVolumeClaim:
+            claimName: splunk-captain-config
+        - name: splunk-captain-data
+          persistentVolumeClaim:
+            claimName: splunk-captain-data
+        - name: splunk-defaults-configmap
+          configMap:
+            name: splunk-defaults-configmap
