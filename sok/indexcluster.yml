@@ -1,0 +1,26 @@
+---
+apiVersion: enterprise.splunk.com/v1beta1
+kind: ClusterMaster
+metadata:
+  name: cm1
+  namespace: splunk
+  finalizers:
+  - enterprise.splunk.com/delete-pvc
+spec:
+  storageClassName: gp2
+  varStorage: "4Gi"
+---
+apiVersion: enterprise.splunk.com/v1beta1
+kind: IndexerCluster
+metadata:
+  name: idxc-site1a
+  namespace: splunk
+  finalizers:
+  - enterprise.splunk.com/delete-pvc
+spec:
+  # No cluster-master created, uses the referenced one
+  clusterMasterRef:
+    name: cm1
+  replicas: 3
+  storageClassName: gp2
+  varStorage: "30Gi"

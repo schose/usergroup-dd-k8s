@@ -1,0 +1,17 @@
+apiVersion: enterprise.splunk.com/v1beta1
+kind: LicenseMaster
+metadata:
+  name: licensemaster
+  namespace: splunk
+  finalizers:
+  - enterprise.splunk.com/delete-pvc
+spec:
+  volumes:
+    - name: licenses
+      configMap:
+        name: splunk-licenses
+  licenseUrl: /mnt/licenses/enterprise.lic
+  defaultsUrl: /mnt/defaults/default.yml
+  defaults: |-
+    splunk:
+      password: Password01

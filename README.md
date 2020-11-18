@@ -59,42 +59,72 @@ oder
 - install configmaps
 
   
-
-``k apply -f prep/splunk-configmap.yml``
-``k apply -f prep/splunk-defaults-configmap.yml``
-
-  
-
-- create storage claims
+```
+k apply -f prep/splunk-configmap.yml
+k apply -f prep/splunk-defaults-configmap.yml
+```
 
   
 
-``k apply -f pvc``
+- create storage claims  
+```
+k apply -f pvc
+```
 
   
 
 - create services
-
-  
-
-``k apply -f services``
+```
+k apply -f service
+```
 
   
 
 - create pods
 
-  
+```
+k apply -f deploy
+```
 
-``k apply -f deploy``
 
-  
-
+#### alb ####
+- https://docs.aws.amazon.com/eks/latest/userguide/load-balancing.html
 - create ALB loadbalancer for internet connectivity
 
-  
+```
+curl -o iam-policy.json https://raw.githubusercontent.com/kubernetes-sigs/aws-load-balancer-controller/main/docs/install/iam_policy.json
+aws iam create-policy \
+    --policy-name AWSLoadBalancerControllerIAMPolicy \
+    --policy-document file://iam-policy.json
+```
 
-``k apply -f alb``
+```
+eksctl create iamserviceaccount \
+  --cluster=splunkusergroup \
+  --namespace=kube-system \
+  --name=aws-load-balancer-controller \
+  --attach-policy-arn=arn:aws:iam::952133313117:policy/AWSLoadBalancerControllerIAMPolicy\
+  --override-existing-serviceaccounts \
+  --approve
+```
 
+```
+kubectl apply -k "github.com/aws/eks-charts/stable/aws-load-balancer-controller//crds?ref=master"
+helm upgrade -i aws-load-balancer-controller eks/aws-load-balancer-controller \
+  --set clusterName=splunkusergroup \
+  --set serviceAccount.create=false \
+  --set serviceAccount.name=aws-load-balancer-controller \
+  -n kube-system
+```
+
+```
+k apply -f alb
+```
+
+eksctl utils associate-iam-oidc-provider \
+    --region eu-central-1 \
+    --cluster splunkusergroup \
+    --approve
   
   
 

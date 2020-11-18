@@ -1,60 +1,65 @@
 ---
-apiVersion: extensions/v1beta1
+apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: license-master
+  name: captain
   labels:
     app: splunk
-    role: splunk_license_master
-    tier: management
+    role: splunk_search_head_captain
+    tier: search
 spec:
   replicas: 1
+  selector:
+    matchLabels:
+      app: splunk
+      role: splunk_search_head_captain
+      tier: search
   template:
     metadata:
       labels:
         app: splunk
-        role: splunk_license_master
-        tier: management 
+        role: splunk_search_head_captain
+        tier: search
     spec:
-      hostname: license-master
+      hostname: captain
       dnsPolicy: ClusterFirst
       dnsConfig:
         searches:
           - indexer.default.svc.cluster.local
           - search.default.svc.cluster.local
       containers:
-        - name: license-master
-          image: splunk/splunk:latest
+        - name: captain
+          image: splunk/splunk:8.0.5
 #          command: ['sh', '-c', 'echo The app is running! && sleep 3600']
           envFrom: 
             - configMapRef:
                 name: splunk-config
           env:
             - name: SPLUNK_ROLE
-              value: splunk_license_master
-            - name: SPLUNK_LICENSE_URI
-              value: /tmp/defaults/nfr_enterprise.lic
-            - name: DEBUG
-              value: "true"
+              value: splunk_search_head_captain
           ports:
             - name: web
               containerPort: 8000
             - name: mgmt
               containerPort: 8089
+            - name: shc
+              containerPort: 4001
+            - name: kv 
+              containerPort: 8191
           volumeMounts:
-            - name: splunk-license-data
+            - name: splunk-captain-data
               mountPath: /opt/splunk/var
-            - name: splunk-license-config
+            - name: splunk-captain-config
               mountPath: /opt/splunk/etc
             - name: splunk-defaults-configmap
               mountPath: /tmp/defaults
       volumes:
-        - name: splunk-license-config
+        - name: splunk-captain-config
           persistentVolumeClaim:
-            claimName: splunk-license-config
-        - name: splunk-license-data
+            claimName: splunk-captain-config
+        - name: splunk-captain-data
           persistentVolumeClaim:
-            claimName: splunk-license-data
+            claimName: splunk-captain-data
         - name: splunk-defaults-configmap
           configMap:
             name: splunk-defaults-configmap

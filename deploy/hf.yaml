@@ -1,37 +1,43 @@
----
-apiVersion: extensions/v1beta1
+apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: deployer
+  name: heavyforwarder
   labels:
     app: splunk
-    role: splunk_deployer
+    role: splunk_heavy_forwarder
     tier: management
 spec:
   replicas: 1
+  selector:
+    matchLabels:
+      app: splunk
+      role: splunk_heavy_forwarder
+      tier: management
   template:
     metadata:
       labels:
         app: splunk
-        role: splunk_deployer
+        role: splunk_heavy_forwarder
         tier: management
     spec:
-      hostname: deployer
+      hostname: heavyforwarder
       dnsPolicy: ClusterFirst
       dnsConfig:
         searches:
           - indexer.default.svc.cluster.local
           - search.default.svc.cluster.local
       containers:
-        - name: deployer
-          image: splunk/splunk:7.2.7
+        - name: heavyforwarder
+          image: splunk/splunk:8.0.5
 #          command: ['sh', '-c', 'echo The app is running! && sleep 3600']
           envFrom: 
             - configMapRef:
                 name: splunk-config
           env:
             - name: SPLUNK_ROLE
-              value: splunk_deployer
+              value: splunk_heavy_forwarder
+            - name: SPLUNK_DEPLOYMENT_SERVER
+              value: dpl
           ports:
             - name: web
               containerPort: 8000
@@ -40,19 +46,19 @@ spec:
             - name: kv
               containerPort: 8191
           volumeMounts:
-            - name: splunk-deployer-data
+            - name: splunk-heavyforwarder-data
               mountPath: /opt/splunk/var
-            - name: splunk-deployer-config
+            - name: splunk-heavyforwarder-config
               mountPath: /opt/splunk/etc
             - name: splunk-defaults-configmap
               mountPath: /tmp/defaults
       volumes:
-        - name: splunk-deployer-config
+        - name: splunk-heavyforwarder-config
           persistentVolumeClaim:
-            claimName: splunk-deployer-config
-        - name: splunk-deployer-data
+            claimName: splunk-heavyforwarder-config
+        - name: splunk-heavyforwarder-data
           persistentVolumeClaim:
-            claimName: splunk-deployer-data
+            claimName: splunk-heavyforwarder-data
         - name: splunk-defaults-configmap
           configMap:
             name: splunk-defaults-configmap

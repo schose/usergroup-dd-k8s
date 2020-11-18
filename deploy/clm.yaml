@@ -1,58 +1,61 @@
 ---
-apiVersion: extensions/v1beta1
+apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: dpl
+  name: master
   labels:
     app: splunk
-    role: splunk_dpl
-    tier: management
+    role: splunk_cluster_master
+    tier: management 
 spec:
   replicas: 1
+  selector:
+    matchLabels:
+      app: splunk
+      role: splunk_cluster_master
+      tier: management 
   template:
     metadata:
       labels:
         app: splunk
-        role: splunk_dpl
-        tier: management
+        role: splunk_cluster_master
+        tier: management 
     spec:
-      hostname: dpl
-      dnsPolicy: ClusterFirst
+      hostname: master
+      dnsPolicy: ClusterFirst 
       dnsConfig:
-        searches:
+        searches: 
           - indexer.default.svc.cluster.local
           - search.default.svc.cluster.local
       containers:
-        - name: dpl
-          image: splunk/splunk:7.2.7
+        - name: master
+          image: splunk/splunk:latest
 #          command: ['sh', '-c', 'echo The app is running! && sleep 3600']
           envFrom: 
             - configMapRef:
                 name: splunk-config
           env:
             - name: SPLUNK_ROLE
-              value: splunk_heavy_forwarder
+              value: splunk_cluster_master
           ports:
             - name: web
               containerPort: 8000
             - name: mgmt
               containerPort: 8089
-            - name: kv
-              containerPort: 8191
           volumeMounts:
-            - name: splunk-dpl-data
+            - name: splunk-master-data
               mountPath: /opt/splunk/var
-            - name: splunk-dpl-config
+            - name: splunk-master-config
               mountPath: /opt/splunk/etc
             - name: splunk-defaults-configmap
               mountPath: /tmp/defaults
       volumes:
-        - name: splunk-dpl-config
+        - name: splunk-master-config
           persistentVolumeClaim:
-            claimName: splunk-dpl-config
-        - name: splunk-dpl-data
+            claimName: splunk-master-config
+        - name: splunk-master-data
           persistentVolumeClaim:
-            claimName: splunk-dpl-data
+            claimName: splunk-master-data
         - name: splunk-defaults-configmap
           configMap:
             name: splunk-defaults-configmap

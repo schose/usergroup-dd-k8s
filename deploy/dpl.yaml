@@ -1,60 +1,63 @@
 ---
-apiVersion: extensions/v1beta1
+apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: captain
+  name: dpl
   labels:
     app: splunk
-    role: splunk_search_head_captain
-    tier: search
+    role: splunk_dpl
+    tier: management
 spec:
   replicas: 1
+  selector:
+    matchLabels:
+      app: splunk
+      role: splunk_dpl
+      tier: management
   template:
     metadata:
       labels:
         app: splunk
-        role: splunk_search_head_captain
-        tier: search
+        role: splunk_dpl
+        tier: management
     spec:
-      hostname: captain
+      hostname: dpl
       dnsPolicy: ClusterFirst
       dnsConfig:
         searches:
           - indexer.default.svc.cluster.local
           - search.default.svc.cluster.local
       containers:
-        - name: captain
-          image: splunk/splunk:7.2.7
+        - name: dpl
+          image: splunk/splunk:8.0.5
 #          command: ['sh', '-c', 'echo The app is running! && sleep 3600']
           envFrom: 
             - configMapRef:
                 name: splunk-config
           env:
             - name: SPLUNK_ROLE
-              value: splunk_search_head_captain
+              value: splunk_heavy_forwarder
           ports:
             - name: web
               containerPort: 8000
             - name: mgmt
               containerPort: 8089
-            - name: shc
-              containerPort: 4001
-            - name: kv 
+            - name: kv
               containerPort: 8191
           volumeMounts:
-            - name: splunk-captain-data
+            - name: splunk-dpl-data
               mountPath: /opt/splunk/var
-            - name: splunk-captain-config
+            - name: splunk-dpl-config
               mountPath: /opt/splunk/etc
             - name: splunk-defaults-configmap
               mountPath: /tmp/defaults
       volumes:
-        - name: splunk-captain-config
+        - name: splunk-dpl-config
           persistentVolumeClaim:
-            claimName: splunk-captain-config
-        - name: splunk-captain-data
+            claimName: splunk-dpl-config
+        - name: splunk-dpl-data
           persistentVolumeClaim:
-            claimName: splunk-captain-data
+            claimName: splunk-dpl-data
         - name: splunk-defaults-configmap
           configMap:
             name: splunk-defaults-configmap

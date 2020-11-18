@@ -4,12 +4,13 @@ kind: ClusterConfig
 metadata:
   name: splunkusergroup
   region: eu-central-1
-  version: "1.14"
+  version: "1.18"
 
 nodeGroups:
   - name: ng-1
     instanceType: m5.2xlarge
     desiredCapacity: 3
-#    ssh:
-#      allow: true # will use ~/.ssh/id_rsa.pub as the default ssh key
-#      publicKeyPath: ec2-ffm-2016
+    availabilityZones: ["eu-central-1a"]
+    ssh:
+      allow: true # will use ~/.ssh/id_rsa.pub as the default ssh key
+      publicKeyPath: ec2-ffm-2016
