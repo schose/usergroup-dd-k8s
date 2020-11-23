@@ -1,0 +1,10 @@
+---
+apiVersion: enterprise.splunk.com/v1beta1
+kind: SearchHeadCluster
+metadata:
+  name: myshc
+  finalizers:
+  - enterprise.splunk.com/delete-pvc
+spec:
+  clusterMasterRef:
+    name: cm1

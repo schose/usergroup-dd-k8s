@@ -1,0 +1,129 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: splunk-defaults
+  namespace: splunk
+data:
+  default.yml: |-
+    ---
+    shc_bootstrap_delay: 30
+    splunk_home_ownership_enforcement: true
+    #splunk_home_ownership_enforcement: false
+    retry_num: 50
+    ansible_ssh_user: splunk
+    ansible_pre_tasks: 
+    license_master_host: license-master
+    splunk:
+      opt: "/opt"
+      smartstore:
+      http_enableSSL_cert:
+      hec_token:
+      license_master_included: true
+      hec_port: 8088
+      exec: "/opt/splunk/bin/splunk"
+      idxc:
+        secret: mypass4splunk
+        enable: false
+        replication_port: 9887
+        search_factor: 1
+        replication_factor: 2
+        label: idxc_label
+      tar_dir: splunk
+      pid: "/opt/splunk/var/run/splunk/splunkd.pid"
+      apps_location: []
+      nfr_license: "/tmp/defaults/nfr_enterprise.lic"
+      wildcard_license: false
+      admin_user: admin
+      user: splunk
+      http_enableSSL: 0
+      home: "/opt/splunk/"
+      password: Splunk4all+1
+      shc:
+        secret: shcpass4splunk
+        enable: false
+        replication_port: 9887
+        replication_factor: 3
+        label: shc_label
+      svc_port: 8089
+      app_paths:
+        default: "/opt/splunk/etc/apps"
+        idxc: "/opt/splunk/etc/master-apps"
+        shc: "/opt/splunk/etc/shcluster/apps"
+        httpinput: "/opt/splunk/etc/apps/splunk_httpinput"
+        deployment: "/opt/splunk/etc/deployment-apps"
+      hec_enableSSL: 1
+      http_port: 8000
+      group: splunk
+      http_enableSSL_privKey:
+      indexer_cluster: false
+      build_remote_src: false
+      hec_disabled: 0
+      license_uri: https://license-master:8089
+      secret: .iSA5BePdmeFXPQDKf49Ebkugm/b8Raq0c2iDU0X5ThDDrXttrv8SAh8iwTMRf.n6o2WrJVB4WTkSaqLkwOOYKfYOOWpw1mcj7aSA9Q5uoT.dTKBwMAdkKD.n3bWOXhzBMOTMLurrHgf6B0h1aZOX5iFdiGQK5DBBCzxLQROQ9aVSA2nHRcvw47.eT/GghSWGloLoJaNTGEgBjbnGM0sHV8ZyVhiQ1UIXhTT2PU.gzk/bwcpAKSl.TAjh0Bmfv
+      allow_upgrade: true
+      role:
+      s2s_enable: true
+      http_enableSSL_privKey_password:
+      s2s_port: 9997
+      deployer_included: true
+      search_head_cluster_url: captain
+      ignore_license: true
+      search_head_cluster: true
+      license_download_dest: "/tmp/splunk.lic"
+      enable_service: false
+    ansible_post_tasks:
+    delay_num: 3
+    config:
+      max_timeout: 1200
+      host:
+        url:
+        headers:
+        verify: true
+      env:
+        var: SPLUNK_DEFAULTS_URL
+        headers:
+        verify: true
+      defaults_dir: "/tmp/defaults"
+      baked: default.yml
+      max_retries: 3
+      max_delay: 60
+    hide_password: false
+
+  nfr_enterprise.lic: |-
+    <?xml version="1.0" encoding="UTF-8"?>
+    <license>
+      <signature>LXGvLEtWQU0xoAJ9TfBlTLY5XQjTrnwGkrmc5/xdIXqnG3RgcacLjQQxb2Os/orI5FAm7NziMKIEAP8r22oxXPl+vWPGCvBTGZrtSiFpjP8heGIw2Exp3howk3M7x9B2nbGTVPutGMt3EhQuVZBHwWHi2YD2khVP3xRhzlB5Ws7VapOLIR7JB71CUn8Lxi9UYWxCq8um2a1gmAjzE/kL+EZvmXkumqafYOyn04QYDTRDNrvKA9EyPXkiOMhxn0EQTYsMvhDKpfbKfaPxhzNK+s8W4l/xqaK9ihvmmftW/GUvr8ITJ4nYvZzoIVbM/ieb8YfNQp04uG3ROCd2zt5pcQ==</signature>
+      <payload>
+        <type>enterprise</type>
+        <group_id>Enterprise</group_id>
+        <quota>10737418240</quota>
+        <max_violations>5</max_violations>
+        <window_period>30</window_period>
+        <creation_time>1592377200</creation_time>
+        <label>Splunk Developer Personal License DO NOT DISTRIBUTE</label>
+        <expiration_time>1608019199</expiration_time>
+        <features>
+          <feature>Auth</feature>
+          <feature>FwdData</feature>
+          <feature>RcvData</feature>
+          <feature>LocalSearch</feature>
+          <feature>DistSearch</feature>
+          <feature>RcvSearch</feature>
+          <feature>ScheduledSearch</feature>
+          <feature>Alerting</feature>
+          <feature>DeployClient</feature>
+          <feature>DeployServer</feature>
+          <feature>SplunkWeb</feature>
+          <feature>SigningProcessor</feature>
+          <feature>SyslogOutputProcessor</feature>
+          <feature>CanBeRemoteMaster</feature>
+        </features>
+        <add_ons>
+          <add_on name="itsi" type="app">
+            <parameter key="size" value="10"/>
+          </add_on>
+        </add_ons>
+        <sourcetypes/>
+        <guid>AB67B7AD-83DE-404E-85D5-3CCE26524A82</guid>
+      </payload>
+    </license>

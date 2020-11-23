@@ -1,3 +1,5 @@
+---
+
 apiVersion: enterprise.splunk.com/v1beta1
 kind: LicenseMaster
 metadata:

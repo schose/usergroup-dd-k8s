@@ -8,7 +8,8 @@ metadata:
 
 nodeGroups:
   - name: ng-1
-    instanceType: m5.2xlarge
+    #instanceType: m5.2xlarge
+    instanceType: m5.xlarge
     desiredCapacity: 3
     availabilityZones: ["eu-central-1a"]
     ssh:

@@ -37,7 +37,7 @@ oder
 
   
 
-``eksctl delete nodegroup nodess --cluster splunkusergroup ``
+``eksctl delete nodegroup ng-1 --cluster splunkusergroup``
 
   
 
@@ -96,6 +96,15 @@ curl -o iam-policy.json https://raw.githubusercontent.com/kubernetes-sigs/aws-lo
 aws iam create-policy \
     --policy-name AWSLoadBalancerControllerIAMPolicy \
     --policy-document file://iam-policy.json
+```
+
+- when restaging
+```
+eksctl utils associate-iam-oidc-provider --region=eu-central-1 --cluster=splunkusergroup --approve
+```
+
+```
+aws iam delete-policy --policy-arn arn:aws:iam::952133313117:policy/AWSLoadBalancerControllerIAMPolicy
 ```
 
 ```
@@ -193,3 +202,19 @@ workaround:
 
 - ansible ENV variables [https://splunk.github.io/splunk-ansible/ADVANCED.html#inventory-script](https://splunk.github.io/splunk-ansible/ADVANCED.html)
 - •[https://github.com/splunk/splunk-connect-for-kubernetes](https://github.com/splunk/splunk-connect-for-kubernetes)
+
+
+#### update route53 ####
+
+```
+aws route53 change-resource-record-sets --hosted-zone-id Z3MGC5JHMTO7EJ --change-batch file://updateroute53.json
+```
+
+- return s an id in pending state
+
+```
+aws route53  get-change --id /change/C3QYC83OA0KX5K
+```
+/change/C02624642VWZS4NK4ZK0D
+
+- https://aws.amazon.com/premiumsupport/knowledge-center/simple-resource-record-route53-cli/

@@ -21,6 +21,6 @@ spec:
   # No cluster-master created, uses the referenced one
   clusterMasterRef:
     name: cm1
-  replicas: 3
+  replicas: 5
   storageClassName: gp2
   varStorage: "30Gi"

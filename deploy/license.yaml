@@ -29,7 +29,7 @@ spec:
           - search.default.svc.cluster.local
       containers:
         - name: license-master
-          image: splunk/splunk:latest
+          image: splunk/splunk:8.0.5
 #          command: ['sh', '-c', 'echo The app is running! && sleep 3600']
           envFrom: 
             - configMapRef:

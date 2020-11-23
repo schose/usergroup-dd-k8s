@@ -7,7 +7,7 @@ metadata:
     role: splunk_indexer
     tier: indexer
 spec:
-  replicas: 5
+  replicas: 3
   selector: 
     matchLabels: 
       app: splunk

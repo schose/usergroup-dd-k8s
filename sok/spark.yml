@@ -1,0 +1,6 @@
+apiVersion: enterprise.splunk.com/v1beta1
+kind: Spark
+metadata:
+  name: spark
+spec:
+  replicas: 3
