@@ -7,13 +7,13 @@ metadata:
   finalizers:
   - enterprise.splunk.com/delete-pvc
 spec:
-  storageClassName: gp2
+  #storageClassName: gp2
   varStorage: "4Gi"
 ---
 apiVersion: enterprise.splunk.com/v1beta1
 kind: IndexerCluster
 metadata:
-  name: idxc-site1a
+  name: indexcluster
   namespace: splunk
   finalizers:
   - enterprise.splunk.com/delete-pvc
@@ -21,6 +21,6 @@ spec:
   # No cluster-master created, uses the referenced one
   clusterMasterRef:
     name: cm1
-  replicas: 5
-  storageClassName: gp2
+  replicas: 6
+  #storageClassName: gp2
   varStorage: "30Gi"

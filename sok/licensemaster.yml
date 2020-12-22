@@ -13,7 +13,7 @@ spec:
       configMap:
         name: splunk-licenses
   licenseUrl: /mnt/licenses/enterprise.lic
-  defaultsUrl: /mnt/defaults/default.yml
-  defaults: |-
-    splunk:
-      password: Password01
+  # defaultsUrl: /mnt/defaults/default.yml
+  # defaults: |-
+  #   splunk:
+  #     password: Password01

@@ -107,6 +107,7 @@ eksctl utils associate-iam-oidc-provider --region=eu-central-1 --cluster=splunku
 aws iam delete-policy --policy-arn arn:aws:iam::952133313117:policy/AWSLoadBalancerControllerIAMPolicy
 ```
 
+- also when restaging
 ```
 eksctl create iamserviceaccount \
   --cluster=splunkusergroup \

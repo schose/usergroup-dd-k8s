@@ -8,3 +8,12 @@ metadata:
 spec:
   clusterMasterRef:
     name: cm1
+  #replicas: 5
+  # volumes:
+  #   - name: apps
+  #     configMap:
+  #       name: splunk-defaults
+  # defaults: |-
+  #   splunk:
+  #     apps_location:
+  #       - http://andreas.ndfnet.de/splunk_essentials_7_2.tgz

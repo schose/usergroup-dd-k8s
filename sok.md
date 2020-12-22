@@ -21,7 +21,7 @@ kubectl delete -f https://github.com/splunk/splunk-operator/releases/download/0.
 
 - get admin password
 ```
-kubectl get secret splunk-`<namespace`>-secret -o jsonpath='{.data.password}' | base64 --decode
+kubectl get secret splunk-splunk-secret -o jsonpath='{.data.password}' | base64 --decode
 ```
 
 
